@@ -1,0 +1,31 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% if message %}
+        <h2>{{ message }}</h2>
+    {% endif %}
+
+    <h2>Active Listings</h2>
+
+    <div class="row row-cols-5 g-4">
+        {% for listing in listings %}
+        <div class="col">
+                <div class="card">
+                    <div class="img-div">
+                        <img src="{{ listing.image }}" class="card-img-top" alt="{{ listing.title }}" >
+                    </div>
+                    <div class="card-body" style="overflow-y: auto;">
+                        <h5 class="card-title">{{ listing.title }}</h5>
+                        <p class="card-text">{{ listing.description }}</p>
+                        <p class="card-text">${{ listing.inicialBid }}</p>
+                        <a href="{% url 'showListing' id=listing.id %}" class="stretched-link"></a>
+                    </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+        
+
+    
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+
+
+    <form action="{% url 'Categories' %}" method="POST">
+        {% csrf_token %}
+        <div class="src-cat">
+            <h2><label for="category">Search by category:</label></h2>
+            <select name="category" id="category">
+                {% for ctgy in categories %}
+                    <option value="{{ctgy.category}}">{{ ctgy.category }}</option>
+                {% endfor %}
+            </select>
+            <input  class="btn btn-primary" type="submit" value="Search">
+        </div>
+    </form>
+
+    
+        <div class="row row-cols-5 g-4">
+            {% for listing in listings %}
+                <div class="col">
+                    <div class="card">
+                        <div class="img-div">
+                            <img src="{{ listing.image }}" class="card-img-top" alt="{{ listing.title }}" >
+                        </div>
+                        <div class="card-body" style="overflow-y: auto;">
+                            <h5 class="card-title">{{ listing.title }}</h5>
+                            <p class="card-text">{{ listing.description }}</p>
+                            <p class="card-text">${{ listing.inicialBid }}</p>
+                            <a href="{{ listing.url }}" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div> 
+
+{% endblock %}

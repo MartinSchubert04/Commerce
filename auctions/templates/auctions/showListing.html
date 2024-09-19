@@ -1,0 +1,90 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    {% if message2 %}
+        <div class="alert alert-success" role="alert"><strong>{{ message2 }}</strong></div>
+    {% endif %}
+    {% if messageError %}
+        <div class="alert alert-danger" role="alert"><strong>{{ messageError }}</strong></div>
+    {% endif %}
+    
+    {% if user != listing.user %}
+        {% if not listing.activeState and user == listing.inicialBid.userBid %}
+            <div class="alert alert-success" role="alert">
+                <strong>You are the winner of this auction</strong>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% if user.is_authenticated  and listing.activeState %}
+        {% if listingOwner %}
+            <form action="{% url 'close' id=listing.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" style="margin-bottom: 10px">Close auction</button>
+            </form>
+        {% endif %}
+        {% if inWatchlist %}
+            <form action="{% url 'removeWatchlist' id=listing.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Remove from watchlist</button>
+            </form>
+        {% else %}
+            <form action="{% url 'addWatchlist' id=listing.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-dark">Add to watchlist</button>
+            </form>
+        {% endif %}
+
+    {% endif %}
+    <div class="img-div">
+        <img class="listing-img" src="{{ listing.image }}" alt="{{ listing.title }}">
+    </div>
+    <h2 class="title">{{listing.title}}</h2>
+    <p>{{ listing.description }}</p>
+    <p>Listed by user: {{ listing.user }}</p>
+    <h5>${{ listing.inicialBid }}</h5>
+
+
+    {% if user.is_authenticated %}
+        <form action="{% url 'newBid' id=listing.id %}" method="post">
+            {% csrf_token %}
+            <div>
+                <label style=" font-weight: bold;">Bid on this auction</label>
+                <input class="bid-inp" min="0" type="number" name="newBid" >
+                <button type="submit" class="btn btn-light" style="background-color: rgb(25, 185, 97); color: white" >Bid</button>
+            </div>
+        </form> 
+    {% else %} 
+        <h6>You must be logged in to be able to bid in any auction</h6>   
+    {% endif %}
+
+    <hr style="margin-top: 50px">
+    <h3 >Comment section</h3>
+
+    {% if user.is_authenticated %}
+        <form action="{% url 'comment' id=listing.id %}" method="post">
+            {% csrf_token %}
+            <div>
+                <input class="comment_inp" type="text" name="addComment" placeholder="Leave a comment...">
+                <button type="submit" class="btn btn-light" style="background-color: grey; color: white" >Send</button>
+            </div>
+        </form>   
+    {% else %}
+        <h5>You must be logged in to leave any comments</h5>        
+    {% endif %}
+
+    
+
+        {% for comment in commentsInListing %}
+            <div class="list-group" style="margin: 5px">
+                <div class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                    <small class="text-muted">{{ comment.userComment}}</small>
+                    </div>
+                    <p class="mb-1">{{ comment.commentText }}</p>
+                </div>    
+            </div>
+         {% endfor %}
+    
+{% endblock %}
